@@ -1,0 +1,49 @@
+https://dagshub.com/diqie/wine-quality-mlflow
+
+## Setup DagsHub untuk MLflow Tracking
+
+### 1. Inisialisasi DagsHub
+```python
+import dagshub
+import mlflow
+
+dagshub.init(
+    repo_owner='diqie',
+    repo_name='wine-quality-mlflow',
+    mlflow=True
+)
+
+# Sekarang MLflow akan tracking ke DagsHub
+with mlflow.start_run():
+    # Training code here
+    mlflow.log_param("param", value)
+    mlflow.log_metric("metric", value)
+```
+
+### 2. Environment Variables
+```bash
+export MLFLOW_TRACKING_URI=https://dagshub.com/diqie/wine-quality-mlflow.mlflow
+export MLFLOW_TRACKING_USERNAME=diqie
+export MLFLOW_TRACKING_PASSWORD=your_token_here
+```
+
+### 3. Login dengan DagsHub CLI
+```bash
+dagshub login
+# atau
+dagshub login --token YOUR_TOKEN
+```
+
+### 4. View Experiments
+Buka: https://dagshub.com/diqie/wine-quality-mlflow.mlflow
+
+### 5. Repository Structure di DagsHub
+```
+wine-quality-mlflow/
+├── mlflow/
+│   └── experiments/
+├── data/
+│   └── wine_preprocessed/
+└── models/
+    └── random_forest/
+```

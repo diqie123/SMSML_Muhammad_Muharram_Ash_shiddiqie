@@ -1,0 +1,15 @@
+artifact_uri: file:C:/Users/diqie/Desktop/SMSML_Muhammad_Muharram_Ash_shiddiqie/Membangun_model/mlruns/620265935423355760/e86702acd2d44297b94521f7cd93576d/artifacts
+end_time: 1775469857736
+entry_point_name: ''
+experiment_id: '620265935423355760'
+lifecycle_stage: active
+run_id: e86702acd2d44297b94521f7cd93576d
+run_name: basic_rf_model
+run_uuid: e86702acd2d44297b94521f7cd93576d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775469854626
+status: 3
+tags: []
+user_id: diqie

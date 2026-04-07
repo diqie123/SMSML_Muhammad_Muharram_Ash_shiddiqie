@@ -1,0 +1,154 @@
+# Grafana Alert Rules
+
+## Rule 1: High Error Rate Alert
+
+**Name:** High Model Error Rate
+**Condition:** WHEN avg() OF query(A, 5m, now) IS ABOVE 0.2
+**Query A:** `model_error_rate`
+**Evaluation:** Every 1m For 5m
+
+**Message:**
+```
+Alert: Model error rate is above 20%
+
+Current error rate: {{ $values.A }}
+Threshold: 0.2
+
+Please check model performance and data quality.
+```
+
+**Labels:**
+- severity: warning
+- team: ml-ops
+
+---
+
+## Rule 2: Low Model Accuracy Alert
+
+**Name:** Low Model Accuracy
+**Condition:** WHEN avg() OF query(A, 5m, now) IS BELOW 0.75
+**Query A:** `model_accuracy`
+**Evaluation:** Every 1m For 5m
+
+**Message:**
+```
+Alert: Model accuracy has dropped below 75%
+
+Current accuracy: {{ $values.A }}
+Threshold: 0.75
+
+Model retraining may be required.
+```
+
+**Labels:**
+- severity: critical
+- team: ml-ops
+
+---
+
+## Rule 3: High Prediction Latency Alert
+
+**Name:** High Prediction Latency
+**Condition:** WHEN percentile(95) OF query(A, 5m, now) IS ABOVE 0.5
+**Query A:** `prediction_latency_seconds_bucket`
+**Evaluation:** Every 1m For 3m
+
+**Message:**
+```
+Alert: 95th percentile prediction latency is above 500ms
+
+Current latency: {{ $values.A }}s
+Threshold: 0.5s
+
+Please check server resources and model optimization.
+```
+
+**Labels:**
+- severity: warning
+- team: infrastructure
+
+---
+
+## Rule 4: Data Drift Detected
+
+**Name:** Data Drift Detected
+**Condition:** WHEN max() OF query(A, 10m, now) IS ABOVE 0.5
+**Query A:** `feature_drift_score`
+**Evaluation:** Every 5m For 10m
+
+**Message:**
+```
+Alert: Significant data drift detected
+
+Drift score: {{ $values.A }}
+Threshold: 0.5
+
+Features may have changed distribution. Consider model retraining.
+```
+
+**Labels:**
+- severity: warning
+- team: data-science
+
+---
+
+## Rule 5: High System CPU Usage
+
+**Name:** High CPU Usage
+**Condition:** WHEN avg() OF query(A, 5m, now) IS ABOVE 80
+**Query A:** `system_cpu_usage_percent`
+**Evaluation:** Every 1m For 5m
+
+**Message:**
+```
+Alert: System CPU usage is above 80%
+
+Current CPU usage: {{ $values.A }}%
+Threshold: 80%
+
+Consider scaling resources or optimizing workload.
+```
+
+**Labels:**
+- severity: warning
+- team: infrastructure
+
+---
+
+## Rule 6: High System Memory Usage
+
+**Name:** High Memory Usage
+**Condition:** WHEN avg() OF query(A, 5m, now) IS ABOVE 85
+**Query A:** `system_memory_usage_percent`
+**Evaluation:** Every 1m For 5m
+
+**Message:**
+```
+Alert: System memory usage is above 85%
+
+Current memory usage: {{ $values.A }}%
+Threshold: 85%
+
+Consider scaling memory resources.
+```
+
+**Labels:**
+- severity: critical
+- team: infrastructure
+
+---
+
+## Notification Channels
+
+### Email Notifications
+- Configure SMTP settings in Grafana
+- Add email addresses for alerts
+
+### Slack Notifications
+- Create Slack webhook
+- Configure in Grafana notification channels
+
+### Webhook Notifications
+- Endpoint: http://your-webhook-endpoint
+- Method: POST
+- Payload: JSON

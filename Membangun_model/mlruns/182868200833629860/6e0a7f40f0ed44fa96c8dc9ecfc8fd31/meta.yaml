@@ -1,0 +1,15 @@
+artifact_uri: file:C:/Users/diqie/Desktop/SMSML_Muhammad_Muharram_Ash_shiddiqie/Membangun_model/mlruns/182868200833629860/6e0a7f40f0ed44fa96c8dc9ecfc8fd31/artifacts
+end_time: 1775469789833
+entry_point_name: ''
+experiment_id: '182868200833629860'
+lifecycle_stage: active
+run_id: 6e0a7f40f0ed44fa96c8dc9ecfc8fd31
+run_name: bedecked-hawk-779
+run_uuid: 6e0a7f40f0ed44fa96c8dc9ecfc8fd31
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1775469789691
+status: 3
+tags: []
+user_id: diqie

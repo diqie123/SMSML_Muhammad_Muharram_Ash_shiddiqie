@@ -1,0 +1,18 @@
+digest: 7a158d3d
+name: dataset
+profile: '{"num_rows": 800, "num_elements": 12000}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "fixed_acidity", "required":
+  true}, {"type": "double", "name": "volatile_acidity", "required": true}, {"type":
+  "double", "name": "citric_acid", "required": true}, {"type": "double", "name": "residual_sugar",
+  "required": true}, {"type": "double", "name": "chlorides", "required": true}, {"type":
+  "double", "name": "free_sulfur_dioxide", "required": true}, {"type": "double", "name":
+  "total_sulfur_dioxide", "required": true}, {"type": "double", "name": "density",
+  "required": true}, {"type": "double", "name": "pH", "required": true}, {"type":
+  "double", "name": "sulphates", "required": true}, {"type": "double", "name": "alcohol",
+  "required": true}, {"type": "double", "name": "total_acidity", "required": true},
+  {"type": "double", "name": "ph_acidity_ratio", "required": true}, {"type": "double",
+  "name": "sulphates_alcohol_ratio", "required": true}, {"type": "double", "name":
+  "free_sulfur_percentage", "required": true}]}'
+source: '{"tags": {"mlflow.user": "diqie", "mlflow.source.name": "modelling.py", "mlflow.source.type":
+  "LOCAL", "mlflow.source.git.commit": "557e9acb8266c63ba333d832224114e168e9551e"}}'
+source_type: code
