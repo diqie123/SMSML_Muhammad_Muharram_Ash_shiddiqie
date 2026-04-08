@@ -42,10 +42,9 @@ def main():
     
     # Define hyperparameter grid
     param_grid = {
-        'n_estimators': [50, 100, 200],
-        'max_depth': [5, 10, 15, None],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4]
+        'n_estimators': [100],
+        'max_depth': [10, None],
+        'min_samples_split': [2, 5]
     }
     
     run = mlflow.start_run(run_name="tuned_rf_model")
@@ -98,6 +97,45 @@ def main():
         mlflow.log_metric("precision", float(precision))
         mlflow.log_metric("recall", float(recall))
         mlflow.log_metric("f1_score", float(f1))
+        
+        # 1. Manual Log: Confusion Matrix Plot
+        import matplotlib.pyplot as plt
+        from sklearn.metrics import ConfusionMatrixDisplay
+        
+        fig, ax = plt.subplots(figsize=(8, 6))
+        ConfusionMatrixDisplay.from_estimator(best_model, X_test, y_test, ax=ax, cmap='Blues')
+        plt.title('Confusion Matrix - Tuned RF Model')
+        conf_matrix_path = os.path.join(script_dir, "confusion_matrix.png")
+        plt.savefig(conf_matrix_path)
+        plt.close()
+        mlflow.log_artifact(conf_matrix_path)
+        os.remove(conf_matrix_path)
+        
+        # 2. Manual Log: Feature Importance Plot
+        import seaborn as sns
+        
+        importances = best_model.feature_importances_
+        feature_names = X_train.columns
+        feature_importance_df = pd.DataFrame({'feature': feature_names, 'importance': importances})
+        feature_importance_df = feature_importance_df.sort_values(by='importance', ascending=False).head(15)
+        
+        plt.figure(figsize=(10, 8))
+        sns.barplot(x='importance', y='feature', data=feature_importance_df)
+        plt.title('Top 15 Feature Importances')
+        feat_imp_path = os.path.join(script_dir, "feature_importance.png")
+        plt.savefig(feat_imp_path)
+        plt.close()
+        mlflow.log_artifact(feat_imp_path)
+        os.remove(feat_imp_path)
+        
+        # 3. Manual Log: Classification Report
+        from sklearn.metrics import classification_report
+        report = classification_report(y_test, y_pred)
+        report_path = os.path.join(script_dir, "classification_report.txt")
+        with open(report_path, "w") as f:
+            f.write(report)
+        mlflow.log_artifact(report_path)
+        os.remove(report_path)
         
         # Save model params as artifact
         model_params = {
