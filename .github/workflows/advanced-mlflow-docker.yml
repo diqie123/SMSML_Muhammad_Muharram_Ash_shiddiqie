@@ -1,0 +1,92 @@
+name: advanced-mlflow-docker
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  train_build_push:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r Membangun_model/requirements.txt
+
+      - name: Train model (MLflow autolog)
+        run: |
+          python Membangun_model/modelling.py
+
+      - name: Resolve latest MLflow model dir
+        run: |
+          python - << 'PY'
+          import glob
+          import os
+          
+          paths = glob.glob("Membangun_model/mlruns/*/*/artifacts/model/MLmodel")
+          paths = [p for p in paths if os.path.isfile(p)]
+          paths.sort(key=os.path.getmtime, reverse=True)
+          
+          if not paths:
+              raise SystemExit("No MLmodel found under Membangun_model/mlruns")
+          
+          model_dir = os.path.dirname(paths[0])
+          print(model_dir)
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as f:
+              f.write(f"MODEL_DIR={model_dir}\n")
+          PY
+
+      - name: Build Docker image (mlflow models build-docker)
+        env:
+          IMAGE_NAME: bank-marketing-mlflow
+        run: |
+          mlflow models build-docker -m "$MODEL_DIR" -n "$IMAGE_NAME"
+          echo "IMAGE_NAME=$IMAGE_NAME" >> "$GITHUB_ENV"
+
+      - name: Docker login
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      - name: Tag & push image to Docker Hub
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          docker tag "$IMAGE_NAME" "$DOCKERHUB_USERNAME/$IMAGE_NAME:latest"
+          docker push "$DOCKERHUB_USERNAME/$IMAGE_NAME:latest"
+
+      - name: Save build info artifact into repository
+        run: |
+          {
+            echo "image=$IMAGE_NAME"
+            echo "model_dir=$MODEL_DIR"
+            echo "sha=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+          } > Membangun_model/docker_image_build_info.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Membangun_model/mlruns Membangun_model/mlflow.db Membangun_model/docker_image_build_info.txt || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: update mlflow artifacts"
+          git push
